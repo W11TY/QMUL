@@ -11,6 +11,7 @@ import {
   Link2Off,
   Layers,
   BarChart3,
+  Filter,
 } from "lucide-react";
 import {
   Dialog,
@@ -115,6 +116,8 @@ export function Explorer({ initialAnatomy }: { initialAnatomy?: string }) {
   function toggle(list: string[], set: (v: string[]) => void, val: string) {
     set(list.includes(val) ? list.filter((v) => v !== val) : [...list, val]);
   }
+
+  const [showFilters, setShowFilters] = useState(false);
 
   function sortBy(key: SortKey) {
     if (sortKey === key) setSortDir(sortDir === "asc" ? "desc" : "asc");
@@ -242,50 +245,73 @@ export function Explorer({ initialAnatomy }: { initialAnatomy?: string }) {
                     className="h-12 w-full rounded-none border-2 border-black bg-white pl-9 pr-3 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-0 shadow-[6px_6px_0px_#050505] hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[14px_14px_0px_#050505] focus:-translate-x-2 focus:-translate-y-2 focus:shadow-[14px_14px_0px_#050505] font-bold"
                   />
                 </div>
-                <div className="shrink-0 text-xs text-muted-foreground num">
-                  {filtered.length} / {ALL.length}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={cn(
+                      "inline-flex h-12 items-center justify-center rounded-none border-2 border-black px-4 text-sm font-bold uppercase tracking-wider transition-all",
+                      showFilters
+                        ? "bg-black text-white shadow-[2px_2px_0px_#050505] translate-y-[2px] translate-x-[2px]"
+                        : "bg-primary text-white shadow-[6px_6px_0px_#050505] hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[14px_14px_0px_#050505]"
+                    )}
+                  >
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filters
+                    {activeFilters > 0 && (
+                      <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-black text-[10px]">
+                        {activeFilters}
+                      </span>
+                    )}
+                  </button>
+                  <div className="shrink-0 text-xs text-muted-foreground num hidden sm:block">
+                    {filtered.length} / {ALL.length}
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-4 space-y-3">
-                <FilterRow
-                  label="Anatomy"
-                  values={anatomies}
-                  selected={anatomyFilter}
-                  onToggle={(v) => toggle(anatomyFilter, setAnatomyFilter, v)}
-                />
-                <FilterRow
-                  label="Source"
-                  values={sources}
-                  selected={sourceFilter}
-                  onToggle={(v) => toggle(sourceFilter, setSourceFilter, v)}
-                />
-                <FilterRow
-                  label="Link"
-                  values={["Available", "Missing"]}
-                  selected={linkFilter}
-                  onToggle={(v) => toggle(linkFilter, setLinkFilter, v)}
-                />
-                <FilterRow
-                  label="Masks"
-                  values={["Available", "Not Available", "Unknown"]}
-                  selected={masksFilter}
-                  onToggle={(v) => toggle(masksFilter, setMasksFilter, v)}
-                />
-                {activeFilters > 0 && (
-                  <button
-                    onClick={() => {
-                      setAnatomyFilter([]);
-                      setSourceFilter([]);
-                      setLinkFilter([]);
-                      setMasksFilter([]);
-                    }}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                  >
-                    <X className="h-3 w-3" /> Clear filters
-                  </button>
-                )}
-              </div>
+              {showFilters && (
+                <div className="mt-6 space-y-3 animate-in slide-in-from-top-2 fade-in duration-200">
+                  <FilterRow
+                    label="Anatomy"
+                    values={anatomies}
+                    selected={anatomyFilter}
+                    onToggle={(v) => toggle(anatomyFilter, setAnatomyFilter, v)}
+                  />
+                  <FilterRow
+                    label="Source"
+                    values={sources}
+                    selected={sourceFilter}
+                    onToggle={(v) => toggle(sourceFilter, setSourceFilter, v)}
+                  />
+                  <FilterRow
+                    label="Link"
+                    values={["Available", "Missing"]}
+                    selected={linkFilter}
+                    onToggle={(v) => toggle(linkFilter, setLinkFilter, v)}
+                  />
+                  <FilterRow
+                    label="Masks"
+                    values={["Available", "Not Available", "Unknown"]}
+                    selected={masksFilter}
+                    onToggle={(v) => toggle(masksFilter, setMasksFilter, v)}
+                  />
+                  {activeFilters > 0 && (
+                    <button
+                      onClick={() => {
+                        setAnatomyFilter([]);
+                        setSourceFilter([]);
+                        setLinkFilter([]);
+                        setMasksFilter([]);
+                        setQuery("");
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-none border-2 border-black px-3 py-1 text-xs font-bold transition-all hover:bg-black hover:text-white uppercase tracking-wider mt-4"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Clear all filters
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Table / Cards */}
