@@ -50,9 +50,9 @@ function uniq<T>(arr: T[]) {
   return Array.from(new Set(arr));
 }
 
-export function Explorer() {
+export function Explorer({ initialAnatomy }: { initialAnatomy?: string }) {
   const [query, setQuery] = useState("");
-  const [anatomyFilter, setAnatomyFilter] = useState<string[]>([]);
+  const [anatomyFilter, setAnatomyFilter] = useState<string[]>(initialAnatomy ? [initialAnatomy] : []);
   const [sourceFilter, setSourceFilter] = useState<string[]>([]);
   const [linkFilter, setLinkFilter] = useState<string[]>([]);
   const [masksFilter, setMasksFilter] = useState<string[]>([]);
@@ -130,20 +130,19 @@ export function Explorer() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-surface">
+      <header className="border-b-4 border-black bg-black text-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-primary">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Ultrasound imaging · ML research
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+                <span className="h-2 w-2 rounded-none bg-primary border border-black" />
+                ULTRASOUND IMAGING · ML RESEARCH
               </div>
-              <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                Ultrasound Dataset Explorer
+              <h1 className="mt-2 text-3xl font-display tracking-wide sm:text-5xl">
+                QMUL Cancer Research
               </h1>
-              <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">
-                A curated catalog of public ultrasound imaging datasets — filter by anatomy,
-                source, link status, and segmentation availability.
+              <p className="mt-1.5 max-w-2xl text-sm font-bold opacity-80 tracking-wide">
+                A curated catalog of public ultrasound imaging datasets.
               </p>
             </div>
           </div>
@@ -187,13 +186,13 @@ export function Explorer() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
                   <XAxis
                     dataKey="anatomy"
-                    tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+                    tick={{ fontSize: 10, fill: "var(--color-muted-foreground)" }}
                     tickLine={false}
                     axisLine={{ stroke: "var(--color-border)" }}
                     interval={0}
-                    angle={-20}
+                    angle={-45}
                     textAnchor="end"
-                    height={60}
+                    height={85}
                   />
                   <YAxis
                     allowDecimals={false}
@@ -221,7 +220,7 @@ export function Explorer() {
       {/* Body */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Tabs defaultValue="all">
-          <TabsList className="flex w-full flex-wrap justify-start gap-1 bg-surface-muted p-1">
+          <TabsList className="flex w-full flex-wrap justify-start gap-1 mb-6">
             <TabsTrigger value="all">All datasets</TabsTrigger>
             <TabsTrigger value="anatomy">By anatomy</TabsTrigger>
             <TabsTrigger value="source">By source</TabsTrigger>
@@ -240,7 +239,7 @@ export function Explorer() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search dataset, anatomy, or cancer type…"
-                    className="h-10 w-full rounded-md border border-input bg-surface pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="h-12 w-full rounded-none border-2 border-black bg-white pl-9 pr-3 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-0 shadow-[6px_6px_0px_#050505] hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[14px_14px_0px_#050505] focus:-translate-x-2 focus:-translate-y-2 focus:shadow-[14px_14px_0px_#050505] font-bold"
                   />
                 </div>
                 <div className="shrink-0 text-xs text-muted-foreground num">
@@ -292,10 +291,10 @@ export function Explorer() {
             {/* Table / Cards */}
             <div className="mt-4 card-surface overflow-hidden">
               {/* Desktop table */}
-              <div className="hidden md:block">
+              <div className="mt-6 hidden md:block overflow-x-auto border-2 border-black bg-white shadow-[4px_4px_2px_#050505]">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border bg-surface-muted text-xs uppercase tracking-wider text-muted-foreground">
+                    <tr className="border-b-2 border-black bg-black text-white text-xs uppercase tracking-wider font-bold">
                       <Th sortable active={sortKey === "dataset_name"} dir={sortDir} onClick={() => sortBy("dataset_name")}>
                         Dataset
                       </Th>
@@ -452,11 +451,11 @@ function StatCard({
           : "text-foreground/70";
   return (
     <div className="card-surface p-4 sm:p-5">
-      <div className={cn("flex items-center gap-2 text-xs font-medium", tone)}>
+      <div className={cn("flex items-center gap-2 text-xs font-bold", tone)}>
         {icon}
-        <span className="uppercase tracking-wider">{label}</span>
+        <span className="uppercase tracking-widest text-muted-foreground">{label}</span>
       </div>
-      <div className="mt-2 num text-3xl font-semibold tracking-tight text-foreground">
+      <div className="mt-2 num text-4xl font-display tracking-tight text-foreground">
         {value.toLocaleString("en-US")}
       </div>
     </div>
@@ -585,7 +584,7 @@ function GroupedView({
   return (
     <div className="space-y-3">
       {groups.map(([name, items]) => (
-        <Collapsible key={name} defaultOpen>
+        <Collapsible key={name}>
           <div className="card-surface overflow-hidden">
             <CollapsibleTrigger className="group flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-surface-muted">
               <div className="flex items-center gap-2.5">
@@ -637,10 +636,10 @@ function CardGrid({
         <button
           key={d.dataset_name}
           onClick={() => onSelect(d)}
-          className="card-surface card-surface-hover group p-4 text-left"
+          className="card-surface card-surface-hover group block w-full min-w-0 p-4 text-left"
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
+          <div className="flex w-full min-w-0 items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <AnatomyIcon anatomy={d.anatomy} className="h-4 w-4 shrink-0 text-primary" />
                 <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -651,7 +650,7 @@ function CardGrid({
                 {d.dataset_name}
               </div>
               {d.cancer_type && (
-                <div className="mt-0.5 text-xs text-muted-foreground">{d.cancer_type}</div>
+                <div className="mt-0.5 truncate text-xs text-muted-foreground">{d.cancer_type}</div>
               )}
             </div>
           </div>
@@ -730,9 +729,9 @@ function DetailDialog({
                   href={dataset.link}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  className="inline-flex items-center gap-2 rounded-none border-2 border-black shadow-[6px_6px_0px_#050505] bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wider text-white transition-all hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[14px_14px_0px_#050505]"
                 >
-                  Visit source
+                  VISIT SOURCE
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               </div>
